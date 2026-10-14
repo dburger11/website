@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Code</title>
+        <link href="css.css" rel="stylesheet">
+    </head>
+
+
+    <body>
+        <header>
+            <h1>My Portfolio </h1>
+            <h2>Daniel Burger </h2>
+            <h3>My Code</h3>
+        </header>
+        <nav>
+            <a href="index.html"> Home</a>
+            <a href="aboutMe.html"> About Me</a>
+            <a href="transcript.html"> Transcript and Grades</a>
+            <a href="myCode.html"> My Code</a>
+            <a href="myWriting.html"> My Writing</a>
+            <a href="aboutSite.html"> About This Site</a>
+        </nav>
+     <p class="card">
+        This is a collection of code I have written in my time in school. First and foremost - this website was created as a final project for my website development class!
+     </p>
+
+<details class="codeBox">
+    <summary>Python Payroll Project</summary>
+    <pre><code>
+# FINAL PROJECT
+# PAYROLL PROGRAM
+# PURPOSE: To take input of employee data, calculate information such as taxes, gross pay, net pay, et cetera,
+# and write information and calculations to a file.
+
+# Author: Daniel Burger
+# Date: 03/02/2026
+# PROMPT:
+'''
+This is what you need to include in your program and final project:
+
+Entry of the employee's first and last name, ID, number of dependents, hours worked, and pay rate for 10 employees
+Calculate Gross Pay Amount
+Overtime will be calculated on hours over 40 at 1.5 times the hourly rate.
+Calculate the number of dependents x $25
+Calculate State Tax at 5.6%
+Calculate Federal Tax at 7.9%
+Calculate a pre-tax amount
+Calculate the pre-tax amount - the dependents x 25
+Calculate the post-tax amount
+
+
+The required output should include the following:
+Employee name and employee ID 
+Numbers of hours worked and pay rate
+Calculate Gross pay
+Calculated taxes and total Net pay for each employee individually
+
+
+Follow good program standards by storing and defining your variables.
+
+You should provide evidence by creating testing scenarios and showing the test results.
+'''
+
+# Declarations
+firstName = None          # Employee's first name 
+lastName = None           # Employee's last name
+IDnum = None              # Employee identification number
+hourlyWage = 0.00         # Employee's hourly pay rate / wage
+depend = 0                # Number of dependents
+hours = 0.00              # Hours worked, calculated based on a a one week pay period
+gross = 0.0               # Dollar amount of gross pay
+net = 0.0                 # Dollar amount of net pay
+preTax = 0.0              # Dollar amount for pre-tax pay, equal to gross - (dependends * 25)
+stateDed = 0.0            # Dollar amount for state deductions
+fedDed = 0.0              # Dollar amount for federal deductions
+STATE_TAX = 0.056         # State tax percentage
+FED_TAX = 0.079           # Federal tax percentage
+EXPECTED_HOURS = 40       # The typical, non-overtime hours for a standard 2 week pay period
+OVERTIME_RATE = 1.5       # The rate multiplier at which overtime is paid, AKA "time and a half."
+DEPENDENT_DEDUCTION = 25  # The dollar amount deducted per dependent
+ALLOWED_HOURS = 168       # The maximum number of hours allowed as input for weekly hours.
+                          # ALLOWED_HOURS is equal to 7 days in a week times 24 hours in a day,
+                          # in the event of an employee who receives continuous on-call pay.
+
+
+# loop per employee to gather employee information, process, show output, then write to a file
+while True:
+
+#    INPUT 
+######################################################################
+# name and ID /// OR /// ENDING PROGRAM
+    firstName = input("Please enter employee's first name, or enter 'done' to finish: ").upper()
+    if firstName == "DONE":
+        break
+    lastName = input("Please enter "+ firstName + "'s last name: ").upper()
+    IDnum = input("Please enter " + firstName + " " + lastName + "'s ID number: ")
+# hourly wage
+    hourlyWage = float(input("Please enter " + firstName + " " + lastName + "'s hourly wage: "))
+    while hourlyWage <= 0:
+        print("Error. Wage cannot be zero or negative. Try again.")
+        hourlyWage = float(input("Please enter  " + firstName + " " + lastName + "'s hourly wage: "))
+
+# AN ATTEMPT THAT DIDN'T WORK 
+    '''
+     This inner loop is SUPPOSED to make sure the user cannot accidentally input letters or symbols, or invalid input.
+     HOWEVER, I could not get it to function. I have figured out that the "isdecimal" function will not work with fractions,
+     as it seems to be reading the decimal point as not a decimal-number, and therefor reads it as invalid.
+     In the end, I decided that functionality in best-case-scenarios (i.e. valid input) was more important than
+     non-functioning code that would check for invalid input.
+
+
+        hourlyWage = input("Please enter  " + firstName + " " + lastName + "'s hourly wage: ")
+        while True:                                 
+            if hourlyWage.isdecimal():
+                hourlyWage = float(hourlyWage)
+                if hourlyWage <= 0:
+                    print("Error. Wage cannot be zero or negative. Try again.")
+                    hourlyWage = input("Please enter  " + firstName + " " + lastName + "'s hourly wage: ")             
+                else:
+                    break
+            else:
+                print("Invalid wage, try again.")
+            hourlyWage = input("Please enter  " + firstName + " " + lastName + "'s hourly wage: ")
+    '''
+
+# hours worked
+    hours = float(input("Please enter " + firstName + " " + lastName + "'s hours worked this week: "))
+    while hours < 0:
+       print("Error. Hours cannot be negative. Try again.")
+       print("Please enter hours worked by ", firstName, lastName)
+       hours = float(input("Hours worked: "))
+    while hours > ALLOWED_HOURS:
+       print("Error. Hours worked cannot exceed the number of hours in a 1 week pay period. Try again.")
+       print("Please enter hours worked by ", firstName, lastName)
+       hours = float(input("Hours worked: "))
+# dependents
+    depend = int(input("Please enter " + firstName + " " + lastName + "'s number of dependents: "))
+    while depend < 0:
+        print("Error. Dependents cannot be negative. Try again.")
+        depend = int(input("Please enter " + firstName + " " + lastName + "'s number of dependents: "))
+
+#    PROCESSING
+######################################################################
+    if hours > EXPECTED_HOURS:
+        gross = (hours - EXPECTED_HOURS) * (hourlyWage * OVERTIME_RATE) + (hourlyWage * EXPECTED_HOURS)
+    else:
+        gross = hours * hourlyWage
+
+    preTax = gross - (depend * DEPENDENT_DEDUCTION)
+
+    stateDed = preTax * STATE_TAX
+    fedDed = preTax * FED_TAX
+
+    net = preTax - stateDed - fedDed
+
+#OUTPUT
+####################################
+    print("The gross pay for ", firstName, lastName, "is: $", gross)
+    if preTax < 0:
+        preTax = 0
+        print("Pre-tax does not cover deductions. Pre-tax is zero.")
+    else:
+        print(f"Their pre-tax salary is: ${preTax}")
+        print(f"Their state deduction is: ${stateDed}")
+        print(f"Their federal deduction is: ${fedDed}")
+    if net < 0:
+        net = 0
+        print("Net pay does not cover deductions. Net is zero.")
+    else:
+        print(f"Their net pay is: ${net}")
+
+# WRITING TO FILE
+######################################################################
+    with open("employee_payroll.txt", "a") as q:
+        q.write("----------------------------------\n")  # to break up employees info for readability 
+        q.write(f"Employee: {firstName} {lastName}\n")
+        q.write(f"ID#: {IDnum}\n")
+        q.write(f"Hourly Wage: ${hourlyWage:.2f}\n")
+        q.write(f"Hours Worked: {hours:.2f}\n")
+        q.write(f"Dependents: {depend}\n")
+        q.write(f"Gross Pay: ${gross:.2f}\n")
+        q.write(f"Pre-Tax Pay: ${preTax:.2f}\n")
+        q.write(f"State Deduction: ${stateDed:.2f}\n")
+        q.write(f"Federal Deduction: ${fedDed:.2f}\n")
+        q.write(f"Net Pay: ${net:.2f}\n\n")
+print("Your information has been written to the file titled 'employee_payroll'")
+print("Program has ended. Thank you :)")
+
+    
+    </code></pre>
+</details>
+
+<details class="codeBox">
+    <summary>The JavaScript for the palette selector on this site!</summary>
+    <pre><code>
+// Find the palette selection dropdown and the Apply Palette button
+const applyPalette = document.querySelector("#applyPalette");
+const paletteChoice = document.querySelector("#paletteChoice");
+
+// APPLY PALETTE
+// --------------------------------------------------
+// This section only runs on pages that have the
+// "Apply Palette" button.
+//
+// The "if (applyPalette)" prevents an error on other pages 
+// where the button doesn't exist.
+
+if (applyPalette) {
+
+    // Wait for the user to click the Apply Palette button
+    applyPalette.addEventListener("click", function() {
+
+        // Get the value of the option the user selected
+        const chosenPalette = paletteChoice.value;
+
+        // Remove any old palette class, because that would
+        // PROBABLY break something if there was more than one
+        // applied, and I dont wanna mess with that
+
+        document.body.classList.remove(
+            "paletteMoss",
+            "paletteSunset",
+            "paletteOcean",
+            "paletteRetro",
+            "paletteClassic"
+        );
+
+
+        // Add the class that matches the users choice
+        if (chosenPalette === "moss") {
+            document.body.classList.add("paletteMoss");
+        }
+        else if (chosenPalette === "sunset") {
+            document.body.classList.add("paletteSunset");
+        }
+        else if (chosenPalette === "ocean") {
+            document.body.classList.add("paletteOcean");
+        }
+        else if (chosenPalette === "retro") {
+            document.body.classList.add("paletteRetro");
+        }
+        else if (chosenPalette === "classic") {
+            document.body.classList.add("paletteClassic");
+        }
+
+
+        // save the choice in the browser's localStorage so
+        // so it can be persistent across pages, not going
+        // back to default when you click thru the nav
+
+        localStorage.setItem("palette", chosenPalette);
+
+    });
+}
+
+
+
+// RESTORE SAVED PALETTE !! VERY IMPORTANT !!
+// -----------------------------------------------
+// checks localStorage to see if the user already 
+// selected a palette when they open new page,
+// makes it persistant across pages.
+// ------------------------------------------------
+
+// NOTE: this line was copied directly from ChatGPT
+const savedPalette = localStorage.getItem("palette");
+
+
+// if a saved palette exists, apply its class to the 
+// body of the current page
+
+if (savedPalette === "moss") {
+    document.body.classList.add("paletteMoss");
+}
+else if (savedPalette === "sunset") {
+    document.body.classList.add("paletteSunset");
+}
+else if (savedPalette === "ocean") {
+    document.body.classList.add("paletteOcean");
+}
+else if (savedPalette === "retro") {
+    document.body.classList.add("paletteRetro");
+}
+else if (savedPalette === "classic") {
+    document.body.classList.add("paletteClassic");
+}
+
+        
+    </code></pre>
+</details>
+
+     <details class="codeBox">
+    <summary>More coming soon!</summary>
+    <pre><code>
+       (As soon as I take more coding classes)
+    </code></pre>
+     </details>
+
+
+</body>
+<script src="script.js"></script>
